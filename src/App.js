@@ -1,25 +1,37 @@
-import logo from './logo.svg';
 import './App.css';
+import { useEffect, useState } from 'react';
+import Navbar from './layouts/navbar';
+import Login from './authentication/login';
+import SignUp from './authentication/signUp';
 
 function App() {
+  const [user, setUser] = useState('');
+  const [toggleForm, setToggleForm] = useState(true);
+  const formMode = () => {
+    setToggleForm(!toggleForm);
+  }
+  const userState = () => {
+    const data = localStorage.getItem('user');
+    const us = data !== null ? JSON.parse(data) : null;
+    setUser(us);
+  }
+
+  useEffect(() => {
+    userState();
+  }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      {user !== null ? (
+        <>
+          <Navbar setUserState={() => setUser(null)} />
+        </>
+      ) : (
+        <>
+          {toggleForm ? (<Login loggedIn={(user) => setUser(user)} toggle={() => formMode()} />) : (<SignUp toggle={() => formMode()} />)}
+        </>
+      )}
+    </>
+
   );
 }
-
 export default App;
